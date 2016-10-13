@@ -111,7 +111,7 @@ export default class SliderMonitor extends Component {
     let reportsOptions;
     if (reports.length) {
       reportsOptions = [
-        { children: 'Current history', value: '' },
+        { children: 'Current log', value: '' },
         ...reports.map(report => (
           { children: report.title, value: report.id }
         ))

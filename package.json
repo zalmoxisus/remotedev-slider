@@ -1,6 +1,6 @@
 {
   "name": "remotedev-slider",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Slider monitor for Redux DevTools Extension and Remotedev.",
   "main": "lib/Slider.js",
   "files": [

@@ -18,6 +18,8 @@ export default class SliderMonitor extends Component {
   state = {
     isPlaying: false,
     speed: 1000,
+    index: undefined,
+    waiting: false,
     reportId: ''
   };
 
@@ -33,6 +35,15 @@ export default class SliderMonitor extends Component {
       nextProps.reports !== this.props.reports;
   }
 
+  getValue(currentStateIndex, computedStates) {
+    if (this.state.waiting) {
+      const index = this.state.index;
+      if (typeof index !== 'undefined') return index;
+    }
+    return computedStates.length < 2 ? 100 :
+      (currentStateIndex / (computedStates.length - 1)) * 100;
+  }
+
   jumpToState(index, fromPlaying) {
     if (!fromPlaying && this.state.isPlaying) this.dismissPlay();
     this.props.dispatch({
@@ -41,22 +52,52 @@ export default class SliderMonitor extends Component {
     });
   }
 
-  handleSlider = (e) => {
+  handleSlider(index) {
     const limit = this.props.liftedState.computedStates.length - 1;
     if (limit < 1) return;
-    const prevValue = this.props.liftedState.currentStateIndex;
-    let value = (e.target.value / 100) * limit;
-    if (prevValue < value) value = Math.ceil(value);
-    else value = Math.floor(value);
-    this.jumpToState(value);
+    this.jumpToState(Math.round((index / 100) * limit));
+  }
+
+  handleChange = (e) => {
+    const index = e.target.value;
+    if (this.state.waiting) {
+      clearTimeout(this.waitingTimeout);
+      this.waitingTimeout = setTimeout(() => {
+        this.handleSlider(index);
+      }, 500);
+      this.setState({ index });
+      return;
+    }
+    this.handleSlider(index);
   };
 
   handlePrev = () => {
+    if (this.props.liftedState.currentStateIndex < 1) return;
     this.jumpToState(this.props.liftedState.currentStateIndex - 1);
   };
 
   handleNext = () => {
+    const liftedState = this.props.liftedState;
+    if (liftedState.currentStateIndex === liftedState.computedStates.length - 1) return;
     this.jumpToState(this.props.liftedState.currentStateIndex + 1);
+  };
+
+  handleArrows = (e) => {
+    if (e.nativeEvent.key === 'ArrowLeft') {
+      e.preventDefault(); this.handlePrev();
+    } else if (e.nativeEvent.key === 'ArrowRight') {
+      e.preventDefault(); this.handleNext();
+    }
+  };
+
+  handleMouseDown = () => {
+    this.setState({ waiting: true });
+  };
+
+  handleMouseUp = (e) => {
+    clearTimeout(this.waitingTimeout);
+    this.handleSlider(e.target.value);
+    this.setState({ waiting: false, index: undefined });
   };
 
   handlePlay = () => {
@@ -96,8 +137,7 @@ export default class SliderMonitor extends Component {
   render() {
     const { currentStateIndex, computedStates } = this.props.liftedState;
     const showActions = this.props.showActions && currentStateIndex !== -1;
-    const value = computedStates.length < 2 ? 100 :
-      (currentStateIndex / (computedStates.length - 1)) * 100;
+    const value = this.getValue(currentStateIndex, computedStates);
     const isEnd = value === 100;
     const isBegin = value === 0 || currentStateIndex <= 0;
     let label = '';
@@ -132,7 +172,10 @@ export default class SliderMonitor extends Component {
           <Slider
             label={label}
             value={value}
-            onChange={this.handleSlider}
+            onChange={this.handleChange}
+            onKeyDown={this.handleArrows}
+            onMouseDown={this.handleMouseDown}
+            onMouseUp={this.handleMouseUp}
             name="slider-monitor"
             fill color={this.props.fillColor}
             style={{

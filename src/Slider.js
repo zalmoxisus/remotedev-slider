@@ -198,7 +198,7 @@ export default class SliderMonitor extends Component {
             fill color={this.props.fillColor}
             style={{
               overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
-              paddingBottom: showActions ? '13px' : '0'
+              paddingBottom: showActions ? '13px' : '0px'
             }}
           />
         </Box>
@@ -224,7 +224,7 @@ export default class SliderMonitor extends Component {
             options={speedOptions}
             value={this.state.speed}
             onChange={this.handleSpeedChange}
-            style={{ marginBottom: '0' }}
+            style={{ marginBottom: '0px' }}
           />
         </Box>
         {reportsOptions &&
@@ -234,7 +234,7 @@ export default class SliderMonitor extends Component {
               options={reportsOptions}
               value={this.state.reportId}
               onChange={this.handleReportChange}
-              style={{ marginBottom: '0' }}
+              style={{ marginBottom: '0px' }}
             />
           </Box>
         }
@@ -245,7 +245,7 @@ export default class SliderMonitor extends Component {
 
 SliderMonitor.propTypes = {
   showActions: PropTypes.bool,
-  dispatch: PropTypes.func.isRequired,
+  dispatch: PropTypes.func,
   liftedState: PropTypes.shape({
     computedStates: PropTypes.array,
     stagedActionIds: PropTypes.array,

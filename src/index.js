@@ -27,7 +27,7 @@ export default class RemotedevSlider extends Component {
 
 RemotedevSlider.propTypes = {
   showActions: PropTypes.bool,
-  dispatch: PropTypes.func.isRequired,
+  dispatch: PropTypes.func,
   computedStates: PropTypes.array,
   stagedActionIds: PropTypes.array,
   actionsById: PropTypes.object,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { createDevTools } from 'redux-devtools';
-import RemotedevSlider from 'remotedev-slider';
+import RemotedevSlider from 'remotedev-slider/lib/index';
 
 const reports = [
   {

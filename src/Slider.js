@@ -55,7 +55,13 @@ export default class SliderMonitor extends Component {
   handleSlider(index) {
     const limit = this.props.liftedState.computedStates.length - 1;
     if (limit < 1) return;
-    this.jumpToState(Math.round((index / 100) * limit));
+    let value = (index / 100) * limit;
+    if (value > this.props.liftedState.currentStateIndex) {
+      value = Math.ceil(value);
+    } else {
+      value = Math.floor(value);
+    }
+    this.jumpToState(value);
   }
 
   handleChange = (e) => {

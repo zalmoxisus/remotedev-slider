@@ -131,7 +131,19 @@ export default class SliderMonitor extends Component {
   handleReportChange = (e) => {
     const reportId = e.target.value;
     this.setState({ reportId });
-    if (reportId) this.props.getReport(reportId);
+    if (!reportId) return;
+    const getReport = this.props.getReport;
+    if (getReport) {
+      getReport(reportId);
+    } else {
+      const report = this.props.reports.find(r => r.id === reportId);
+      if (!report || !report.payload) return;
+      let nextLiftedState = report.payload;
+      if (typeof nextLiftedState === 'string') nextLiftedState = JSON.parse(nextLiftedState);
+      let preloadedState = report.preloadedState;
+      if (typeof preloadedState === 'string') preloadedState = JSON.parse(preloadedState);
+      this.props.dispatch({ type: 'IMPORT_STATE', nextLiftedState, preloadedState });
+    }
   };
 
   render() {
@@ -149,7 +161,7 @@ export default class SliderMonitor extends Component {
 
     const reports = this.props.reports;
     let reportsOptions;
-    if (reports.length) {
+    if (reports && reports.length) {
       reportsOptions = [
         { children: 'Current log', value: '' },
         ...reports.map(report => (
@@ -234,8 +246,8 @@ SliderMonitor.propTypes = {
     actionsById: PropTypes.object,
     currentStateIndex: PropTypes.number
   }).isRequired,
-  reports: PropTypes.array.isRequired,
-  getReport: PropTypes.func.isRequired,
+  reports: PropTypes.array,
+  getReport: PropTypes.func,
   style: PropTypes.object,
   fillColor: PropTypes.string
 };

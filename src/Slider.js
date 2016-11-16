@@ -204,7 +204,7 @@ export default class SliderMonitor extends Component {
         </Box>
         <Box>
           <Button
-            backgroundColor="transparent" p={0} style={isBegin && { display: 'none' }}
+            backgroundColor="transparent" p={0} disabled={isBegin}
             onClick={this.handlePrev}
           >
             <LeftButton size={36} />
@@ -212,7 +212,7 @@ export default class SliderMonitor extends Component {
         </Box>
         <Box>
           <Button
-            backgroundColor="transparent" p={0} style={isEnd && { display: 'none' }}
+            backgroundColor="transparent" p={0} disabled={isEnd}
             onClick={this.handleNext}
           >
             <RightButton size={36} />

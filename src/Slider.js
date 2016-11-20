@@ -48,6 +48,7 @@ export default class SliderMonitor extends Component {
     if (!fromPlaying && this.state.isPlaying) this.dismissPlay();
     this.props.dispatch({
       type: 'JUMP_TO_STATE',
+      actionId: this.props.liftedState.stagedActionIds[index],
       index
     });
   }

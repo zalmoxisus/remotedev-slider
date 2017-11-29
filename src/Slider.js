@@ -3,6 +3,8 @@ import { Flex, Box } from 'reflexbox';
 import Select from 'rebass/dist/Select';
 import Slider from 'rebass/dist/Slider';
 import Button from 'rebass/dist/Button';
+import Switch from 'rebass/dist/Switch';
+import Label from 'rebass/dist/Label';
 import PlayButton from 'react-icons/lib/md/play-arrow';
 import PauseButton from 'react-icons/lib/md/pause';
 import LeftButton from 'react-icons/lib/md/keyboard-arrow-left';
@@ -17,6 +19,7 @@ const speedOptions = [
 export default class SliderMonitor extends Component {
   state = {
     isPlaying: false,
+    isRepeating: false,
     speed: 1000,
     index: undefined,
     waiting: false,
@@ -113,14 +116,22 @@ export default class SliderMonitor extends Component {
       return;
     }
 
-    const { speed } = this.state;
+    const { speed, isRepeating } = this.state;
     const lastIndex = this.props.liftedState.computedStates.length - 1;
     let index = this.props.liftedState.currentStateIndex;
     if (index === lastIndex) index = -1;
     this.timer = setInterval(() => {
       index++;
       if (index <= lastIndex) this.jumpToState(index, true);
-      if (index >= lastIndex) this.dismissPlay();
+      if (index >= lastIndex) {
+        this.dismissPlay();
+        if (isRepeating) {
+          setTimeout(() => {
+            this.jumpToState(0, true);
+            this.handlePlay();
+          }, speed);
+        }
+      }
     }, speed);
     this.setState({ isPlaying: true });
   };
@@ -153,7 +164,13 @@ export default class SliderMonitor extends Component {
     }
   };
 
+  handleIsRepeating = () => {
+    const { isRepeating } = this.state;
+    this.setState({ isRepeating: !isRepeating });
+  };
+
   render() {
+    const { isRepeating } = this.state;
     const { currentStateIndex, computedStates } = this.props.liftedState;
     const showActions = this.props.showActions && currentStateIndex !== -1;
     const value = this.getValue(currentStateIndex, computedStates);
@@ -227,6 +244,15 @@ export default class SliderMonitor extends Component {
             onChange={this.handleSpeedChange}
             style={{ marginBottom: '0px' }}
           />
+        </Box>
+        <Box p={1}>
+          <Label>
+            Repeat
+            <Switch
+              checked={isRepeating}
+              onClick={this.handleIsRepeating}
+            />
+          </Label>
         </Box>
         {reportsOptions &&
           <Box p={1}>

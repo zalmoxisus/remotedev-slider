@@ -9,9 +9,9 @@ import LeftButton from 'react-icons/lib/md/keyboard-arrow-left';
 import RightButton from 'react-icons/lib/md/keyboard-arrow-right';
 
 const speedOptions = [
-  { children: '.5x', value: 500 },
+  { children: '.5x', value: 2000 },
   { children: '1x', value: 1000 },
-  { children: '2x', value: 2000 }
+  { children: '2x', value: 500 }
 ];
 
 export default class SliderMonitor extends Component {
